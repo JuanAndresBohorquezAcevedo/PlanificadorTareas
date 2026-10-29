@@ -1,0 +1,14 @@
+.etiqueta-atributo {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-color: #dee2e6;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.etiqueta-atributo:hover {
+    background-color: #198754;
+    color: #ffffff;
+    border-color: #198754;
+    transform: translateY(-1px);
+}

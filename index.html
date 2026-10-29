@@ -3,12 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+
     <title>Planificador de Tareas Web</title>
 </head>
-<body>
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row min-vh-100">
 
+            <!-- SIDEBAR -->
+            <aside class="col-12 col-md-3 col-lg-2 bg-secondary-subtle p-4 border-end">
+
+                <h6 class="fw-semibold mb-3">Estado</h6>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroTodas">
+                    <label class="form-check-label" for="filtroTodas">Todas</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroPendientes">
+                    <label class="form-check-label" for="filtroPendientes">Pendientes</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroCompletadas">
+                    <label class="form-check-label" for="filtroCompletadas">Completadas</label>
+                </div>
+
+                <h6 class="fw-semibold mt-4 mb-3">Fecha</h6>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroHoy">
+                    <label class="form-check-label" for="filtroHoy">Hoy</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroEstaSemana">
+                    <label class="form-check-label" for="filtroEstaSemana">Esta semana</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroVencidas">
+                    <label class="form-check-label" for="filtroVencidas">Vencidas</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroSinFecha">
+                    <label class="form-check-label" for="filtroSinFecha">Sin fecha</label>
+                </div>
+
+                <h6 class="fw-semibold mt-4 mb-3">Prioridad</h6>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroAlta">
+                    <label class="form-check-label" for="filtroAlta">Alta</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroMedia">
+                    <label class="form-check-label" for="filtroMedia">Media</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroBaja">
+                    <label class="form-check-label" for="filtroBaja">Baja</label>
+                </div>
+
+                <h6 class="fw-semibold mt-4 mb-3">Categoría</h6>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroTrabajo">
+                    <label class="form-check-label" for="filtroTrabajo">Trabajo</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroPersonal">
+                    <label class="form-check-label" for="filtroPersonal">Personal</label>
+                </div>
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" id="filtroEstudio">
+                    <label class="form-check-label" for="filtroEstudio">Estudio</label>
+                </div>
+            </aside>
+
+            <main class="col-12 col-md-9 col-lg-10 p-4">
+
+                <h3 class="text-center mb-4">Planificador de Tareas</h3>
+
+                <h5 class="mb-3">Mis tareas</h5>
+
+                <!-- Lista de tareas -->
+                <div class="d-flex flex-column gap-2">
+
+                    <!-- Tarea 1 -->
+                    <div class="d-flex align-items-center gap-3 p-3 rounded-2 bg-success-subtle bg-opacity-25 border">
+                        <input class="form-check-input flex-shrink-0" type="checkbox">
+                        
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">Estudiar JavaScript</div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                            <!-- Etiquetas -->
+                            <span class="badge rounded-pill border px-3 py-2 etiqueta-atributo">Fecha</span>
+                            <span class="badge rounded-pill border px-3 py-2 etiqueta-atributo">Categoría</span>
+                            <span class="badge rounded-pill border px-3 py-2 etiqueta-atributo">Prioridad</span>
+
+                            <!-- Botones -->
+                            <button class="btn btn-sm btn-light border"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-light border"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-sm btn-light border"><i class="bi bi-chevron-down"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Botón agregar tarea -->
+                <div class="mt-3">
+                    <button class="btn btn-outline-success w-100 py-3">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+
+            </main>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
