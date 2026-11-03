@@ -2,6 +2,8 @@
     background-color: #f8f9fa;
     color: #495057;
     border-color: #dee2e6;
+    font-size: 0.75rem;
+    white-space: nowrap;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -11,4 +13,74 @@
     color: #ffffff;
     border-color: #198754;
     transform: translateY(-1px);
+}
+
+
+/* TARJETAS DE TAREA */
+.task-card {
+    transition: box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.task-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.d-flex.flex-column.flex-sm-row {
+    overflow: hidden;
+}
+
+
+/* TEXTO */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text-break {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+
+/* SIDEBAR */
+.sidebar {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+#toggleSidebar:not(:checked) ~ .container-fluid .sidebar {
+    display: none;
+}
+
+#toggleSidebar:not(:checked) ~ .container-fluid .main-content {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 575.98px) {
+    .badge.etiqueta-atributo {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 280px;
+        z-index: 1040;
+        overflow-y: auto;
+    }
+
+    #toggleSidebar:not(:checked) ~ .container-fluid .sidebar {
+        display: none;
+    }
 }
