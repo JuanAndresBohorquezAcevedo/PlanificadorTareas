@@ -84,3 +84,24 @@
         display: none;
     }
 }
+
+/* BOTONES DE ACCIÓN DE TAREAS */
+.btn-task-action {
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: #6c757d;
+    box-shadow: none;
+}
+
+.btn-task-action:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: #dee2e6;
+    color: #212529;
+}
+
+.btn-task-action:focus,
+.btn-task-action:active {
+    background-color: transparent;
+    box-shadow: none;
+    color: #212529;
+}
