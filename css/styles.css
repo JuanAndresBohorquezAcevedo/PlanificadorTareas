@@ -105,3 +105,19 @@
     box-shadow: none;
     color: #212529;
 }
+
+.tarea-completada {
+    background-color: #e9ecef !important;
+    border-color: #adb5bd !important;
+    opacity: 0.85;
+}
+
+.tarea-completada .fw-medium {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.tarea-completada .form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}

@@ -1,3 +1,7 @@
+// Instancia de TaskManager (Parte 1 - Tarea 4)
+const taskManager = new TaskManager();
+console.log(taskManager.tasks);
+
 function validFormFieldInput(data) {
     const name = data.name;
     const description = data.description;
@@ -143,6 +147,43 @@ btnConfirmarEliminar.addEventListener("click", function () {
     nombreTareaAEliminar = "";
 });
 
+/**
+ * Parte 2 - Tarea 4: Marcar / desmarcar tarea como completada
+ * El checkbox actúa como toggle. Cambia el aspecto visual de la tarjeta.
+ */
+function aplicarEstadoCompletada(tarjeta, completada) {
+    const titulo = tarjeta.querySelector(".fw-medium");
+    const checkbox = tarjeta.querySelector('input[type="checkbox"]');
+
+    if (completada) {
+        tarjeta.classList.add("tarea-completada");
+        tarjeta.setAttribute("data-status", "completada");
+        if (titulo) {
+            titulo.classList.add("text-decoration-line-through", "text-muted");
+        }
+        if (checkbox) checkbox.checked = true;
+    } else {
+        tarjeta.classList.remove("tarea-completada");
+        tarjeta.setAttribute("data-status", "pendiente");
+        if (titulo) {
+            titulo.classList.remove("text-decoration-line-through", "text-muted");
+        }
+        if (checkbox) checkbox.checked = false;
+    }
+}
+
+// Toggle al hacer clic en el checkbox de la tarjeta
+listaTareas.addEventListener("change", function (event) {
+    const checkbox = event.target.closest('input[type="checkbox"].form-check-input');
+    if (!checkbox) return;
+
+    const tarjeta = checkbox.closest("[data-task-card]");
+    if (!tarjeta) return;
+
+    const estaCompletada = checkbox.checked;
+    aplicarEstadoCompletada(tarjeta, estaCompletada);
+});
+
 function crearTarea(data) {
     contadorTareas += 1;
     const idTarea = "desc-tarea-" + contadorTareas;
@@ -154,14 +195,14 @@ function crearTarea(data) {
     const tarjeta = document.createElement("div");
     tarjeta.className = "border rounded-2 bg-success-subtle bg-opacity-25 overflow-hidden";
     tarjeta.setAttribute("data-task-card", "true");
-    tarjeta.setAttribute("data-status", data.status);
+    tarjeta.setAttribute("data-status", data.status || "pendiente");
     tarjeta.setAttribute("data-priority", data.priority);
     tarjeta.setAttribute("data-category", data.category.toLowerCase());
     tarjeta.setAttribute("data-fecha", data.dueDate);
 
     tarjeta.innerHTML =
         '<div class="d-flex align-items-center gap-3 p-3 pb-2">' +
-            '<input class="form-check-input flex-shrink-0" type="checkbox" />' +
+            '<input class="form-check-input flex-shrink-0" type="checkbox" title="Marcar como completada" />' +
             '<div class="fw-medium text-break flex-grow-1">' + data.name + '</div>' +
             '<div class="d-flex align-items-center gap-1 flex-shrink-0">' +
                 '<button class="btn btn-sm btn-task-action" type="button" title="Editar"><i class="bi bi-pencil"></i></button>' +
