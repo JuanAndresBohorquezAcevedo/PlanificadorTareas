@@ -1,6 +1,5 @@
-// Instancia de TaskManager (Parte 1 - Tarea 4)
 const taskManager = new TaskManager();
-console.log(taskManager.tasks);
+console.log("TaskManager inicial:", taskManager.tasks);
 
 function validFormFieldInput(data) {
     const name = data.name;
@@ -147,10 +146,6 @@ btnConfirmarEliminar.addEventListener("click", function () {
     nombreTareaAEliminar = "";
 });
 
-/**
- * Parte 2 - Tarea 4: Marcar / desmarcar tarea como completada
- * El checkbox actúa como toggle. Cambia el aspecto visual de la tarjeta.
- */
 function aplicarEstadoCompletada(tarjeta, completada) {
     const titulo = tarjeta.querySelector(".fw-medium");
     const checkbox = tarjeta.querySelector('input[type="checkbox"]');
@@ -281,21 +276,25 @@ formNuevaTarea.addEventListener("submit", function (event) {
     prioridadTareaSelect.classList.remove("is-invalid");
     categoriaTareaInput.classList.remove("is-invalid");
 
+    // Registrar la tarea en TaskManager
+    taskManager.addTask(name, description, dueDate, "PORHACER");
+    console.log("Tareas en TaskManager:", taskManager.tasks);
+
     crearTarea(formData);
 
-    mensajeExito.textContent = '¡Tarea "' + name + '" creada correctamente!';
-    alertaExito.classList.remove("d-none");
+    mostrarToastExito('¡Tarea "' + name + '" creada correctamente!');
 
     console.log("Tarea creada:", formData);
 
+    // Limpiar formulario y dejar el modal abierto para crear otra tarea seguido
     formNuevaTarea.reset();
+    alertaError.classList.add("d-none");
+    alertaExito.classList.add("d-none");
+    tituloTareaInput.classList.remove("is-invalid");
+    descripcionTareaInput.classList.remove("is-invalid");
+    fechaLimiteInput.classList.remove("is-invalid");
+    prioridadTareaSelect.classList.remove("is-invalid");
+    categoriaTareaInput.classList.remove("is-invalid");
 
-    setTimeout(function () {
-        alertaExito.classList.add("d-none");
-        const modalElement = document.querySelector("#modalNuevaTarea");
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        if (modal) {
-            modal.hide();
-        }
-    }, 1200);
+    tituloTareaInput.focus();
 });
