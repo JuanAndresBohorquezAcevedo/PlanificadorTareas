@@ -1,6 +1,8 @@
 const taskManager = new TaskManager();
 console.log("TaskManager inicial:", taskManager.tasks);
 
+taskManager.render();
+
 function validFormFieldInput(data) {
     const name = data.name;
     const description = data.description;
@@ -54,7 +56,6 @@ function validFormFieldInput(data) {
     return isValid;
 }
 
-// Elementos del DOM
 const formNuevaTarea = document.querySelector("#formNuevaTarea");
 const alertaError = document.querySelector("#alertaError");
 const mensajeError = document.querySelector("#mensajeError");
@@ -74,30 +75,8 @@ const textoConfirmarEliminar = document.querySelector("#textoConfirmarEliminar")
 const toastExitoEl = document.querySelector("#toastExito");
 const toastExitoMensaje = document.querySelector("#toastExitoMensaje");
 
-let tarjetaAEliminar = null;
+let taskIdAEliminar = null;
 let nombreTareaAEliminar = "";
-let contadorTareas = 100;
-
-function formatearFecha(fechaISO) {
-    if (!fechaISO) return "Sin fecha";
-
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-
-    const fecha = new Date(fechaISO + "T00:00:00");
-    const diffDias = Math.round((fecha - hoy) / (1000 * 60 * 60 * 24));
-
-    if (diffDias === 0) return "Hoy";
-    if (diffDias === 1) return "Mañana";
-    if (diffDias === -1) return "Ayer";
-
-    return fecha.toLocaleDateString("es-ES", { day: "numeric", month: "short" });
-}
-
-function capitalizar(texto) {
-    if (!texto) return "";
-    return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
-}
 
 function mostrarToastExito(mensaje) {
     if (!toastExitoEl || !toastExitoMensaje) return;
@@ -106,121 +85,66 @@ function mostrarToastExito(mensaje) {
     toast.show();
 }
 
-function pedirConfirmacionEliminar(tarjeta) {
-    const tituloEl = tarjeta.querySelector(".fw-medium");
-    nombreTareaAEliminar = tituloEl ? tituloEl.textContent.trim() : "esta tarea";
+function pedirConfirmacionEliminar(taskId, nombreTarea) {
+    taskIdAEliminar = taskId;
+    nombreTareaAEliminar = nombreTarea || "esta tarea";
     textoConfirmarEliminar.textContent =
         '¿Estás seguro de que deseas eliminar la tarea "' + nombreTareaAEliminar + '"?';
-    tarjetaAEliminar = tarjeta;
 
     const modal = bootstrap.Modal.getOrCreateInstance(modalConfirmarEliminarEl);
     modal.show();
 }
 
-// Botón eliminar
 listaTareas.addEventListener("click", function (event) {
-    const btn = event.target.closest(".btn-eliminar");
-    if (!btn) return;
+    const btnEliminar = event.target.closest(".delete-button, .btn-eliminar");
+    if (btnEliminar) {
+        event.preventDefault();
+        event.stopPropagation();
 
-    event.preventDefault();
-    event.stopPropagation();
+        const tarjeta = btnEliminar.closest("[data-task-id]");
+        if (!tarjeta) return;
 
-    const tarjeta = btn.closest("[data-task-card], .border.rounded-2");
-    if (tarjeta) {
-        pedirConfirmacionEliminar(tarjeta);
+        const taskId = Number(tarjeta.dataset.taskId);
+        const tituloEl = tarjeta.querySelector(".fw-medium");
+        const nombre = tituloEl ? tituloEl.textContent.trim() : "esta tarea";
+
+        pedirConfirmacionEliminar(taskId, nombre);
+        return;
     }
 });
 
-// Confirmar eliminación
 btnConfirmarEliminar.addEventListener("click", function () {
-    if (!tarjetaAEliminar) return;
+    if (taskIdAEliminar === null) return;
 
-    tarjetaAEliminar.remove();
+    taskManager.deleteTask(taskIdAEliminar);
+
+    taskManager.save();
+
+    taskManager.render();
 
     const modal = bootstrap.Modal.getInstance(modalConfirmarEliminarEl);
     if (modal) modal.hide();
 
     mostrarToastExito('Tarea "' + nombreTareaAEliminar + '" eliminada correctamente.');
 
-    tarjetaAEliminar = null;
+    taskIdAEliminar = null;
     nombreTareaAEliminar = "";
 });
 
-function aplicarEstadoCompletada(tarjeta, completada) {
-    const titulo = tarjeta.querySelector(".fw-medium");
-    const checkbox = tarjeta.querySelector('input[type="checkbox"]');
-
-    if (completada) {
-        tarjeta.classList.add("tarea-completada");
-        tarjeta.setAttribute("data-status", "completada");
-        if (titulo) {
-            titulo.classList.add("text-decoration-line-through", "text-muted");
-        }
-        if (checkbox) checkbox.checked = true;
-    } else {
-        tarjeta.classList.remove("tarea-completada");
-        tarjeta.setAttribute("data-status", "pendiente");
-        if (titulo) {
-            titulo.classList.remove("text-decoration-line-through", "text-muted");
-        }
-        if (checkbox) checkbox.checked = false;
-    }
-}
-
-// Toggle al hacer clic en el checkbox de la tarjeta
 listaTareas.addEventListener("change", function (event) {
     const checkbox = event.target.closest('input[type="checkbox"].form-check-input');
     if (!checkbox) return;
 
-    const tarjeta = checkbox.closest("[data-task-card]");
+    const tarjeta = checkbox.closest("[data-task-id]");
     if (!tarjeta) return;
 
-    const estaCompletada = checkbox.checked;
-    aplicarEstadoCompletada(tarjeta, estaCompletada);
+    const taskId = Number(tarjeta.dataset.taskId);
+    const nuevoStatus = checkbox.checked ? "completada" : "pendiente";
+
+    taskManager.updateTaskStatus(taskId, nuevoStatus);
+    taskManager.save();
+    taskManager.render();
 });
-
-function crearTarea(data) {
-    contadorTareas += 1;
-    const idTarea = "desc-tarea-" + contadorTareas;
-
-    const fechaTexto = formatearFecha(data.dueDate);
-    const prioridadTexto = capitalizar(data.priority);
-    const categoriaTexto = capitalizar(data.category);
-
-    const tarjeta = document.createElement("div");
-    tarjeta.className = "border rounded-2 bg-success-subtle bg-opacity-25 overflow-hidden";
-    tarjeta.setAttribute("data-task-card", "true");
-    tarjeta.setAttribute("data-status", data.status || "pendiente");
-    tarjeta.setAttribute("data-priority", data.priority);
-    tarjeta.setAttribute("data-category", data.category.toLowerCase());
-    tarjeta.setAttribute("data-fecha", data.dueDate);
-
-    tarjeta.innerHTML =
-        '<div class="d-flex align-items-center gap-3 p-3 pb-2">' +
-            '<input class="form-check-input flex-shrink-0" type="checkbox" title="Marcar como completada" />' +
-            '<div class="fw-medium text-break flex-grow-1">' + data.name + '</div>' +
-            '<div class="d-flex align-items-center gap-1 flex-shrink-0">' +
-                '<button class="btn btn-sm btn-task-action" type="button" title="Editar"><i class="bi bi-pencil"></i></button>' +
-                '<button class="btn btn-sm btn-task-action btn-eliminar" type="button" title="Eliminar"><i class="bi bi-trash"></i></button>' +
-                '<button class="btn btn-sm btn-task-action" type="button" data-bs-toggle="collapse" ' +
-                    'data-bs-target="#' + idTarea + '" aria-expanded="false" aria-controls="' + idTarea + '">' +
-                    '<i class="bi bi-chevron-down"></i>' +
-                '</button>' +
-            '</div>' +
-        '</div>' +
-        '<div class="d-flex align-items-center gap-1 flex-wrap px-3 pb-3">' +
-            '<span class="badge rounded-pill border px-2 py-1 etiqueta-atributo">' + fechaTexto + '</span>' +
-            '<span class="badge rounded-pill border px-2 py-1 etiqueta-atributo">' + categoriaTexto + '</span>' +
-            '<span class="badge rounded-pill border px-2 py-1 etiqueta-atributo">' + prioridadTexto + '</span>' +
-        '</div>' +
-        '<div class="collapse" id="' + idTarea + '">' +
-            '<div class="px-3 pb-3">' +
-                '<div class="border-top pt-2 text-muted small">' + data.description + '</div>' +
-            '</div>' +
-        '</div>';
-
-    listaTareas.append(tarjeta);
-}
 
 function limpiarErrorAlEscribir(input) {
     input.addEventListener("input", function () {
@@ -246,8 +170,8 @@ formNuevaTarea.addEventListener("submit", function (event) {
 
     alertaExito.classList.add("d-none");
 
-    const name = tituloTareaInput.value;
-    const description = descripcionTareaInput.value;
+    const name = tituloTareaInput.value.trim();
+    const description = descripcionTareaInput.value.trim();
     const dueDate = fechaLimiteInput.value;
     const priority = prioridadTareaSelect.value;
     const category = categoriaTareaInput.value;
@@ -276,17 +200,16 @@ formNuevaTarea.addEventListener("submit", function (event) {
     prioridadTareaSelect.classList.remove("is-invalid");
     categoriaTareaInput.classList.remove("is-invalid");
 
-    // Registrar la tarea en TaskManager
-    taskManager.addTask(name, description, dueDate, "PORHACER");
-    console.log("Tareas en TaskManager:", taskManager.tasks);
+    taskManager.addTask(name, description, dueDate, "pendiente", priority, category);
 
-    crearTarea(formData);
+    taskManager.save();
+
+    taskManager.render();
+
+    console.log("Tareas en TaskManager:", taskManager.tasks);
 
     mostrarToastExito('¡Tarea "' + name + '" creada correctamente!');
 
-    console.log("Tarea creada:", formData);
-
-    // Limpiar formulario y dejar el modal abierto para crear otra tarea seguido
     formNuevaTarea.reset();
     alertaError.classList.add("d-none");
     alertaExito.classList.add("d-none");
