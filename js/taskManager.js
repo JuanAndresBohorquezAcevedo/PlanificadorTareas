@@ -40,6 +40,18 @@ class TaskManager {
         }
     }
 
+    getTaskById(taskId) {
+        let foundTask;
+
+        for (let task of this.tasks) {
+            if (task.id === taskId) {
+                foundTask = task;
+            }
+        }
+
+        return foundTask;
+    }
+
     save() {
         const data = {
             tasks: this.tasks,
@@ -67,10 +79,16 @@ class TaskManager {
         const fechaTexto = this.formatearFecha(task.dueDate);
         const prioridadTexto = this.capitalizar(task.priority);
         const categoriaTexto = this.capitalizar(task.category);
-        const isCompletada = task.status === "completada";
+        const isCompletada = task.status === "completada" || task.status === "DONE";
         const checkedAttr = isCompletada ? "checked" : "";
         const completedClass = isCompletada ? "tarea-completada" : "";
         const titleClass = isCompletada ? "text-decoration-line-through text-muted" : "";
+
+        const doneButtonHtml = isCompletada
+            ? ""
+            : `<button class="btn btn-sm btn-success done-button" type="button" title="Mark As Done">
+                    Mark As Done
+               </button>`;
 
         return `
             <div class="border rounded-2 bg-success-subtle bg-opacity-25 overflow-hidden ${completedClass}"
@@ -84,6 +102,7 @@ class TaskManager {
                     <input class="form-check-input flex-shrink-0" type="checkbox" title="Marcar como completada" ${checkedAttr} />
                     <div class="fw-medium text-break flex-grow-1 ${titleClass}">${this.escapeHtml(task.name)}</div>
                     <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                        ${doneButtonHtml}
                         <button class="btn btn-sm btn-task-action" type="button" title="Editar">
                             <i class="bi bi-pencil"></i>
                         </button>

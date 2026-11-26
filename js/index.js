@@ -111,6 +111,28 @@ listaTareas.addEventListener("click", function (event) {
         pedirConfirmacionEliminar(taskId, nombre);
         return;
     }
+
+    const btnDone = event.target.closest(".done-button");
+    if (btnDone) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const parentTask = btnDone.closest("[data-task-id]");
+        if (!parentTask) return;
+
+        const taskId = Number(parentTask.dataset.taskId);
+
+        const task = taskManager.getTaskById(taskId);
+        if (!task) return;
+
+        task.status = "DONE";
+
+        taskManager.save();
+        taskManager.render();
+
+        mostrarToastExito('Tarea "' + task.name + '" marcada como hecha.');
+        return;
+    }
 });
 
 btnConfirmarEliminar.addEventListener("click", function () {
